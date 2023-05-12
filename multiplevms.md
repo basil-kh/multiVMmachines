@@ -82,13 +82,15 @@ sudo npm install pm2 -g
    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
    ```
 
+
    Adds the GPG key for MongoDB to the system.
 
 5. Add MongoDB repository:
 
-   ```bash
-   echo "deb [https://repo.mongodb.org/apt/ubuntu](https://repo.mongodb.org/apt/ubuntu) xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-   ```
+```bash
+ echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+```
+
 
    Adds the MongoDB repository to the package sources list.
 
@@ -278,13 +280,13 @@ node app.js
 
 # Automating server initialization
 
-create a ![Alt text](imgs/dbprovfile.png) and populate with following bash code(same steps we took before):
+1. create a ![Alt text](imgs/dbprovfile.png) and populate with following bash code(same steps we took before):
 ```bash
 #!/bin/bash
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv D68FA50FEA312927
-echo "deb [https://repo.mongodb.org/apt/ubuntu](https://repo.mongodb.org/apt/ubuntu) xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+echo "deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y mongodb-org=3.2.20 mongodb-org-server=3.2.20 mongodb-org-shell=3.2.20 mongodb-org-mongos=3.2.20 mongodb-org-tools=3.2.20
@@ -293,3 +295,35 @@ sudo systemctl enable mongod
 ```
 After this all you have to do is follow from step 13 in the db setup process.
 
+2. Add the following line to your vagrantfile:
+
+```bash
+# # Configure 2 so that 2 virtual machines are created. and note we need a new do block.
+# Vagrant.configure("2") do |config|
+
+#   config.vm.define "app" do |app|
+#   # configures the VM settings
+#     app.vm.box = "ubuntu/bionic64"
+#     app.vm.network "private_network", ip:"192.168.10.100"
+
+#   # Syncs the "app" folder to the "/home/vagrant/app" location on the VM, changes on either will affect the other.
+#     app.vm.synced_folder "app", "/home/vagrant/app"
+  
+#   # provision the VM to have Nginx installed
+#     app.vm.provision "shell", path: "provision.sh", privileged: false
+#   end
+
+#   config.vm.define "db" do |db|
+
+#     db.vm.box = "ubuntu/bionic64"
+#     db.vm.network "private_network", ip:"192.168.10.150"
+
+#     db.vm.synced_folder "environment", "/home/vagrant/environment"
+
+    db.vm.provision "shell", path: "dbprov.sh", privileged: false
+
+#   end
+
+# end
+
+```
