@@ -327,3 +327,7 @@ After this all you have to do is follow from step 13 in the db setup process.
 # end
 
 ```
+Check which app is running on (port 3000) to kill if its interfering
+```bash
+sudo lsof -i :3000
+```
