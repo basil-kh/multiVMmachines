@@ -331,3 +331,39 @@ Check which app is running on (port 3000) to kill if its interfering
 ```bash
 sudo lsof -i :3000
 ```
+
+```bash 
+ sudo lsof -i :27017
+```
+
+```bash
+sudo kill -9 
+```
+
+when everything is done i must kill the DB and restart it, then seed then start the app
+
+# Adding a reverse proxy
+sudo nano /etc/nginx/sites-available/default
+add
+```bash
+. . .
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+```
+Make sure you didn’t introduce any syntax errors by typing:
+`sudo nginx -t`
+then restart nginx `sudo systemctl restart nginx`
+
+`sudo systemctl reload nginx`
+
+`sudo service nginx restart`
+
+kill the app and restart the app
